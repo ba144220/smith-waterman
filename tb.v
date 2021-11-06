@@ -42,8 +42,8 @@ reg flag;
 `endif
 
 initial begin
-$fsdbDumpfile("sw.fsdb");
-$fsdbDumpvars;
+  $dumpfile("sw.vcd");
+  $dumpvars();
 end
 
 
