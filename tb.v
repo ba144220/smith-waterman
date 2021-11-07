@@ -41,9 +41,14 @@ reg flag;
   initial $sdf_annotate(`SDFFILE, u_sw);
 `endif
 
+// initial begin
+//   $dumpfile("sw.vcd");
+//   $dumpvars();
+// end
+
 initial begin
-  $dumpfile("sw.vcd");
-  $dumpvars();
+$fsdbDumpfile("sw.fsdb");
+$fsdbDumpvars;
 end
 
 

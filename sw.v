@@ -1,5 +1,6 @@
 `include "t_reg_array.v"
 `include "s_reg_array.v"
+`include "pe_combine.v"
 
 
 module sw(clk, reset, valid, data_s, data_t, finish, max);
@@ -21,6 +22,7 @@ parameter FINISH = 2'd2;
 // reg & wire
 reg [1:0] state, next_state;
 reg pe_enable, next_pe_enable;
+wire [1:0] s_out, t_out;
 
 // tmp
 reg [11:0] counter;
@@ -33,13 +35,27 @@ t_reg_array t_reg_array_test(
     .clk(clk),
     .reset(reset),
     .valid(valid),
-    .t_in(data_t)
+    .t_in(data_t),
+    .t_out(t_out)
 );
 s_reg_array s_reg_array_test(
     .clk(clk),
     .reset(reset),
     .valid(valid),
-    .s_in(data_s)
+    .s_in(data_s),
+
+    .s_out(s_out)
+);
+pe_combine pe_combine(
+    .clk(clk),
+    .reset(reset),
+    .valid(valid),
+    .pe_enable(pe_enable),
+
+    .s_in(s_out),
+    .t_in(t_out),
+
+    .max_out(max)
 );
 
 
@@ -54,6 +70,7 @@ always@(*) begin
 
             if(valid) begin
                 next_state = BUSY;
+                pe_enable = 1'b1;
                 next_pe_enable = 1'b1;
             end
             else begin
@@ -105,8 +122,6 @@ always@( posedge clk or posedge reset) begin
             counter <= 12'd1;
         end
    end
-
-
 end
     
 endmodule
